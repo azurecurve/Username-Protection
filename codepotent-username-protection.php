@@ -4,10 +4,10 @@
  * -----------------------------------------------------------------------------
  * Plugin Name: Username Protection
  * Description: Prevent username enumeration and exposure through various common vectors.
- * Version: 1.0.0
- * Author: Code Potent
- * Author URI: https://codepotent.com
- * Plugin URI: https://codepotent.com/classicpress/plugins
+ * Version: 1.1.0
+ * Author: azurecurve
+ * Author URI: https://dev.azrcrv.co.uk/classicpress-plugins
+ * Plugin URI: https://dev.azrcrv.co.uk/classicpress-plugins
  * Text Domain: codepotent-username-protection
  * Domain Path: /languages
  * -----------------------------------------------------------------------------
@@ -16,14 +16,9 @@
  * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. Full
  * text of the license is available at https://www.gnu.org/licenses/gpl-2.0.txt.
  * -----------------------------------------------------------------------------
- * Copyright 2020, Code Potent
+ * Copyright 2021, John Alarcon (Code Potent)
  * -----------------------------------------------------------------------------
- *           ____          _      ____       _             _
- *          / ___|___   __| | ___|  _ \ ___ | |_ ___ _ __ | |_
- *         | |   / _ \ / _` |/ _ \ |_) / _ \| __/ _ \ '_ \| __|
- *         | |__| (_) | (_| |  __/  __/ (_) | ||  __/ | | | |_
- *          \____\___/ \__,_|\___|_|   \___/ \__\___|_| |_|\__|.com
- *
+ * Adopted by azurecurve, 06/01/2021
  * -----------------------------------------------------------------------------
  */
 
@@ -82,8 +77,11 @@ class UsernameProtection {
 	 */
 	public function init() {
 
+		// Load constants.
+		require_once plugin_dir_path(__FILE__).'includes/constants.php';
+
 		// Load update client.
-		require_once(plugin_dir_path(__FILE__).'classes/UpdateClient.class.php');
+		require_once(PATH_CLASSES.'/UpdateClient.class.php');
 
 		// Prevent leaks in author id enumeration redirects.
 		add_filter('redirect_canonical', [$this, 'filter_author_archive_redirects'], 10, 2);
@@ -104,6 +102,36 @@ class UsernameProtection {
 		// Prevent leaks in failed login attempts.
 		add_filter('login_errors', [$this, 'filter_login_errors']);
 
+		// POST-ADOPTION: Remove these actions before pushing your next update.
+		add_action('upgrader_process_complete', [$this, 'enable_adoption_notice'], 10, 2);
+		add_action('admin_notices', [$this, 'display_adoption_notice']);
+
+	}
+
+	// POST-ADOPTION: Remove this method before pushing your next update.
+	public function enable_adoption_notice($upgrader_object, $options) {
+		if ($options['action'] === 'update') {
+			if ($options['type'] === 'plugin') {
+				if (!empty($options['plugins'])) {
+					if (in_array(plugin_basename(__FILE__), $options['plugins'])) {
+						set_transient(PLUGIN_PREFIX.'_adoption_complete', 1);
+					}
+				}
+			}
+		}
+	}
+
+	// POST-ADOPTION: Remove this method before pushing your next update.
+	public function display_adoption_notice() {
+		if (get_transient(PLUGIN_PREFIX.'_adoption_complete')) {
+			delete_transient(PLUGIN_PREFIX.'_adoption_complete');
+			echo '<div class="notice notice-success is-dismissible">';
+			echo '<h3 style="margin:25px 0 15px;padding:0;color:#e53935;">IMPORTANT <span style="color:#aaa;">information about the <strong style="color:#333;">'.PLUGIN_NAME.'</strong> plugin</h3>';
+			echo '<p style="margin:0 0 15px;padding:0;font-size:14px;">The <strong>'.PLUGIN_NAME.'</strong> plugin has been officially adopted and is now managed by <a href="'.PLUGIN_AUTHOR_URL.'" rel="noopener" target="_blank" style="text-decoration:none;">'.PLUGIN_AUTHOR.'<span class="dashicons dashicons-external" style="display:inline;font-size:98%;"></span></a>, a longstanding and trusted ClassicPress developer and community member. While it has been wonderful to serve the ClassicPress community with free plugins, tutorials, and resources for nearly 3 years, it\'s time that I move on to other endeavors. This notice is to inform you of the change, and to assure you that the plugin remains in good hands. I\'d like to extend my heartfelt thanks to you for making my plugins a staple within the community, and wish you great success with ClassicPress!</p>';
+			echo '<p style="margin:0 0 15px;padding:0;font-size:14px;font-weight:600;">All the best!</p>';
+			echo '<p style="margin:0 0 15px;padding:0;font-size:14px;">~ John Alarcon <span style="color:#aaa;">(Code Potent)</span></p>';
+			echo '</div>';
+		}
 	}
 
 	/**
