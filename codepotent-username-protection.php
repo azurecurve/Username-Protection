@@ -4,10 +4,10 @@
  * -----------------------------------------------------------------------------
  * Plugin Name: Username Protection
  * Description: Prevent username enumeration and exposure through various common vectors.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: azurecurve
- * Author URI: https://dev.azrcrv.co.uk/classicpress-plugins
- * Plugin URI: https://dev.azrcrv.co.uk/classicpress-plugins
+ * Author URI: https://development.azurecurve.co.uk/classicpress-plugins
+ * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/username-protection
  * Text Domain: codepotent-username-protection
  * Domain Path: /languages
  * -----------------------------------------------------------------------------
