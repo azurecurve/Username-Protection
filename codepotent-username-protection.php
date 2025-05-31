@@ -4,8 +4,9 @@
  * -----------------------------------------------------------------------------
  * Plugin Name:		Username Protection
  * Description:		Prevent username enumeration and exposure through various common vectors.
- * Version:			1.1.2
+ * Version:			1.1.3
  * Requires CP:		1.0
+ * Requires PHP:	7.4
  * Author:			azurecurve
  * Author URI:		https://development.azurecurve.co.uk/classicpress-plugins
  * Plugin URI:		https://development.azurecurve.co.uk/classicpress-plugins/username-protection
